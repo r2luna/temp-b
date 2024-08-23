@@ -22,7 +22,7 @@
 
                     <x-nav-link :href="route('template.index')" :active="request()->routeIs('template.*')">
                         {{ __('Templates') }}
-                    </x-nav-link>]
+                    </x-nav-link>
                 </div>
             </div>
 

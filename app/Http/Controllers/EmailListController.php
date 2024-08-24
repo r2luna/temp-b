@@ -25,7 +25,7 @@ class EmailListController extends Controller
                     ->orWhere('id', '=', $search)
             )
             ->paginate(5)
-            ->appends(compact('search'));
+            ->appends(compact('search', 'withTrashed'));
 
         return view('email-list.index', [
             'emailLists' => $emailLists,

@@ -18,7 +18,7 @@ class TemplateController extends Controller
                 ->when($withTrashed, fn (Builder $query) => $query->withTrashed())
                 ->when($search, fn (Builder $query) => $query->where('name', 'like', "%$search%")->orWhere('id', '=', $search))
                 ->paginate(5)
-                ->appends(compact('search')),
+                ->appends(compact('search', 'withTrashed')),
             'search' => $search,
             'withTrashed' => $withTrashed,
         ]);

@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CampaignStoreRequest;
 use App\Models\Campaign;
+use App\Models\EmailList;
+use App\Models\Template;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Traits\Conditionable;
 
 class CampaignController extends Controller
 {
+    use Conditionable;
+
     public function index()
     {
         $search = request()->get('search', null);
@@ -26,26 +31,34 @@ class CampaignController extends Controller
 
     public function create(?string $tab = null)
     {
-        // session()->forget('campaigns::create');
 
-        return view('campaigns.create', [
-            'tab' => $tab,
-            'form' => match ($tab) {
-                'template' => '_template',
-                'schedule' => '_schedule',
-                default => '_config'
-            },
-            'data' => session()->get('campaigns::create', [
-                'name' => null,
-                'subject' => null,
-                'email_list_id' => null,
-                'template_id' => null,
-                'body' => null,
-                'track_click' => null,
-                'track_open' => null,
-                'send_at' => null,
-            ]),
-        ]);
+        return view(
+            'campaigns.create',
+            array_merge(
+                $this->when(blank($tab), fn () => [
+                    'emailLists' => EmailList::query()->select(['id', 'title'])->orderBy('title')->get(),
+                    'templates' => Template::query()->select(['id', 'name'])->orderBy('name')->get(),
+                ], fn () => []),
+                [
+                    'tab' => $tab,
+                    'form' => match ($tab) {
+                        'template' => '_template',
+                        'schedule' => '_schedule',
+                        default => '_config'
+                    },
+                    'data' => session()->get('campaigns::create', [
+                        'name' => null,
+                        'subject' => null,
+                        'email_list_id' => null,
+                        'template_id' => null,
+                        'body' => null,
+                        'track_click' => null,
+                        'track_open' => null,
+                        'send_at' => null,
+                    ]),
+                ]
+            )
+        );
     }
 
     public function store(CampaignStoreRequest $request, ?string $tab = null)

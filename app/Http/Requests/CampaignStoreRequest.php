@@ -26,8 +26,8 @@ class CampaignStoreRequest extends FormRequest
             $rules = [
                 'name' => ['required', 'max:255'],
                 'subject' => ['required', 'max:40'],
-                'email_list_id' => ['nullable'],
-                'template_id' => ['nullable'],
+                'email_list_id' => ['required', 'exists:email_lists,id'],
+                'template_id' => ['required', 'exists:templates,id'],
             ];
         }
 
@@ -43,7 +43,9 @@ class CampaignStoreRequest extends FormRequest
         $session = session('campaigns::create', $map);
         foreach ($session as $key => $value) {
             $newValue = data_get($map, $key);
-            if (filled($newValue)) {
+            if ($key == 'track_click' || $key == 'track_open') {
+                $session[$key] = $newValue;
+            } elseif (filled($newValue)) {
                 $session[$key] = $newValue;
             }
         }
@@ -57,6 +59,8 @@ class CampaignStoreRequest extends FormRequest
     {
         $session = session()->get('campaigns::create');
         unset($session['_token']);
+        $session['track_click'] = $session['track_click'] ?: false;
+        $session['track_open'] = $session['track_open'] ?: false;
 
         return $session;
     }

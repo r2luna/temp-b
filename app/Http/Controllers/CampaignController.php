@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CampaignStoreRequest;
 use App\Models\Campaign;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
@@ -47,52 +48,14 @@ class CampaignController extends Controller
         ]);
     }
 
-    public function store(?string $tab = null)
+    public function store(CampaignStoreRequest $request, ?string $tab = null)
     {
-        $toRoute = '';
-        $map = array_merge([
-            'name' => null,
-            'subject' => null,
-            'email_list_id' => null,
-            'template_id' => null,
-            'body' => null,
-            'track_click' => null,
-            'track_open' => null,
-            'sent_at' => null,
-        ], request()->all());
-
-        if (blank($tab)) {
-            request()->validate([
-                'name' => ['required', 'max:255'],
-                'subject' => ['required', 'max:40'],
-                'email_list_id' => ['nullable'],
-                'template_id' => ['nullable'],
-            ]);
-            $toRoute = route('campaigns.create', ['tab' => 'template']);
-        }
-
-        if ($tab == 'template') {
-            request()->validate(['body' => ['required']]);
-
-            $toRoute = route('campaigns.create', ['tab' => 'schedule']);
-        }
+        $data = $request->getData();
+        $toRoute = $request->getToRoute();
 
         if ($tab == 'schedule') {
-            request()->validate(['sent_at' => ['required', 'date']]);
-
-            $toRoute = route('campaigns.index');
+            Campaign::create($data);
         }
-
-        // --
-        $session = session('campaigns::create');
-        foreach ($session as $key => $value) {
-            $newValue = data_get($map, $key);
-            if (filled($newValue)) {
-                $session[$key] = $newValue;
-            }
-        }
-
-        session()->put('campaigns::create', $session);
 
         return response()->redirectTo($toRoute);
     }

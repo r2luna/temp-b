@@ -10,4 +10,9 @@ class Campaign extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    public function emailList()
+    {
+        return $this->belongsTo(EmailList::class);
+    }
 }

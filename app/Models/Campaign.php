@@ -22,4 +22,9 @@ class Campaign extends Model
     {
         return $this->belongsTo(EmailList::class);
     }
+
+    public function mails()
+    {
+        return $this->hasMany(CampaignMail::class);
+    }
 }

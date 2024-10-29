@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CampaignShowRequest;
 use App\Http\Requests\CampaignStoreRequest;
 use App\Jobs\SendEmailCampaign;
 use App\Models\Campaign;
@@ -30,13 +31,8 @@ class CampaignController extends Controller
         ]);
     }
 
-    public function show(Campaign $campaign, ?string $what = null)
+    public function show(CampaignShowRequest $request, Campaign $campaign, ?string $what = null)
     {
-        if (is_null($what)) {
-            return to_route('campaigns.show', ['campaign' => $campaign, 'what' => 'statistics']);
-        }
-        abort_unless(in_array($what, ['statistics', 'open', 'clicked']), 404);
-
         // Implementação
         $search = request()->search;
 

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\CampaignMail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 

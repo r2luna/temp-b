@@ -1,5 +1,5 @@
 <x-mail::message>
-{!! $campaign->body !!}
+{!! $body !!}
 
 {{ __('Thanks') }},<br>
 

@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\CampaignMailObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Campaign extends Model
 {

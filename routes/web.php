@@ -14,18 +14,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/email', function () {
-    $campaign = Campaign::find(16);
-
+    $campaign = Campaign::find(11);
     $mail = $campaign->mails()->first();
+
     $email = new EmailCampaign($campaign, $mail);
 
-    SendEmailsCampaignJob::dispatchAfterResponse($campaign);
+    // SendEmailsCampaignJob::dispatchAfterResponse($campaign);
 
     return $email->render();
 });
 
-Route::get('/t/{mail}/o', [TrackingController::class, 'openings'])->name('tracking.openings');
 
+
+Route::get('/t/{mail}/o', [TrackingController::class, 'openings'])->name('tracking.openings');
+Route::get('/t/{mail}/c', [TrackingController::class, 'clicks'])->name('tracking.clicks');
 Route::get('/', function () {
     Auth::loginUsingId(1);
 

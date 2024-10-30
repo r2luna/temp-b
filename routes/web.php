@@ -5,9 +5,26 @@ use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\TrackingController;
 use App\Http\Middleware\CampaignCreateSessionControl;
+use App\Jobs\SendEmailsCampaignJob;
+use App\Mail\EmailCampaign;
+use App\Models\Campaign;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/email', function () {
+    $campaign = Campaign::find(16);
+
+    $mail = $campaign->mails()->first();
+    $email = new EmailCampaign($campaign, $mail);
+
+    SendEmailsCampaignJob::dispatchAfterResponse($campaign);
+
+    return $email->render();
+});
+
+Route::get('/t/{mail}/o', [TrackingController::class, 'openings'])->name('tracking.openings');
 
 Route::get('/', function () {
     Auth::loginUsingId(1);

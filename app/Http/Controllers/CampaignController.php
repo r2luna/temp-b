@@ -8,7 +8,7 @@ use App\Jobs\SendEmailsCampaignJob;
 use App\Models\Campaign;
 use App\Models\EmailList;
 use App\Models\Template;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Traits\Conditionable;
 
 class CampaignController extends Controller
@@ -37,30 +37,17 @@ class CampaignController extends Controller
             return $redirect;
         }
 
-        // Implementação
         $search = request()->search;
 
-        /*
-        select
-            sum(openings) as total_openings
-        ,  count(case when openings > 0 then subscriber_id end) as unique_openings
-        ,  sum(clicks) as total_clicks
-    ,  count(case when clicks > 0 then subscriber_id end) as unique_clicks
-    from campaign_mails m
-    where campaign_id = 1
-        */
-        $query = $campaign
-            ->mails()
-            ->selectRaw('
-                   count(subscriber_id) as total_subscribers
-                ,  sum(openings) as total_openings
-                ,  count(case when openings > 0 then subscriber_id end) as unique_openings
-                ,  round((cast(count(case when openings > 0 then subscriber_id end) as float) / cast(count(subscriber_id) as float)) * 100) as openings_rate
-                ,  sum(clicks) as total_clicks
-                ,  count(case when clicks > 0 then subscriber_id end) as unique_clicks
-                ,  round((cast(count(case when clicks > 0 then subscriber_id end) as float) / cast(count(subscriber_id) as float)) * 100) as clicks_rate
-            ')
-            ->first();
+        $query = $campaign->mails()
+            ->when($what == 'statistics', fn (Builder $query) => $query->statistics())
+            ->when($what == 'open', fn (Builder $query) => $query->openings($search))
+            ->when($what == 'clicked', fn (Builder $query) => $query->clicks($search))
+            ->simplePaginate(5)->withQueryString();
+
+        if ($what == 'statistics') {
+            $query = $query->first()->toArray();
+        }
 
         return view('campaigns.show', compact('campaign', 'what', 'search', 'query'));
     }

@@ -1,8 +1,11 @@
 <?php
 
-
-test('testando tela de login', function(){
+test('testando tela de login', function () {
     $this->get('/login')
         ->assertOk();
 });
-// it();
+
+it('should be able to login', function () {
+    $this->get('/login')
+        ->assertOk();
+});

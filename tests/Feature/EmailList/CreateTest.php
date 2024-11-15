@@ -22,7 +22,7 @@ class CreateTest extends TestCase
 
     public function test_title_should_have_a_max_of_255_characters()
     {
-        $this->post(route('email-list.create'), ['title' => str_repeat('*', 256)])
+        $this->post(route('email-list.create'), ['title' => str_repeat('*', 254)])
             ->assertSessionHasErrors(['title']);
     }
 

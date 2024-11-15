@@ -4,6 +4,9 @@ use App\Models\EmailList;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\getJson;
+
 pest()->group('email-list');
 
 beforeEach(function () {
@@ -13,11 +16,11 @@ beforeEach(function () {
 test('needs to be authenticated', function () {
     Auth::logout();
 
-    $this->getJson(route('email-list.index'))->assertUnauthorized();
+    getJson(route('email-list.index'))->assertUnauthorized();
 
     login();
 
-    $this->get(route('email-list.index'))->assertSuccessful();
+    get(route('email-list.index'))->assertSuccessful();
 });
 
 test('it should be paginate', function () {
@@ -25,7 +28,7 @@ test('it should be paginate', function () {
     EmailList::factory()->count(40)->create();
 
     // Act
-    $response = $this->get(route('email-list.index'));
+    $response = get(route('email-list.index'));
 
     // Asset
     $response->assertViewHas('emailLists', function ($list) {
@@ -43,7 +46,7 @@ test('it should be able to search a list', function () {
     $emailList = EmailList::factory()->create(['title' => 'Title Testing 2']);
 
     // Act
-    $response = $this->get(route('email-list.index', ['search' => 'Testing 2']));
+    $response = get(route('email-list.index', ['search' => 'Testing 2']));
 
     // Asset
     $response->assertViewHas('emailLists', function ($list) use ($emailList) {

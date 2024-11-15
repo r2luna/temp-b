@@ -2,6 +2,9 @@
 
 use Illuminate\Http\UploadedFile;
 
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\post;
+
 pest()->group('email-list');
 
 beforeEach(function () {
@@ -9,17 +12,17 @@ beforeEach(function () {
 });
 
 test('title should be required', function () {
-    $this->post(route('email-list.create'), [])
+    post(route('email-list.create'), [])
         ->assertSessionHasErrors(['title']);
 });
 
 test('title should have a max of 255 characters', function () {
-    $this->post(route('email-list.create'), ['title' => str_repeat('*', 256)])
+    post(route('email-list.create'), ['title' => str_repeat('*', 256)])
         ->assertSessionHasErrors(['title']);
 });
 
 test('file should be required', function () {
-    $this->post(route('email-list.create'), [])
+    post(route('email-list.create'), [])
         ->assertSessionHasErrors(['file']);
 });
 
@@ -42,11 +45,11 @@ test('it should be able create an email list', function () {
     // Assert
     $request->assertRedirectToRoute('email-list.index');
 
-    $this->assertDatabaseHas('email_lists', [
+    assertDatabaseHas('email_lists', [
         'title' => 'Email List Test',
     ]);
 
-    $this->assertDatabaseHas('subscribers', [
+    assertDatabaseHas('subscribers', [
         'email_list_id' => 1,
         'name' => 'Joe Doe',
         'email' => 'joe@doe.com',

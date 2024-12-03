@@ -74,8 +74,8 @@ class CampaignController extends Controller
                     'templates' => Template::query()->select(['id', 'name'])->orderBy('name')->get(),
                 ], fn () => []),
                 $this->when($tab == 'schedule', fn () => [
-                    'countEmails' => EmailList::find($data['email_list_id'])->subscribers()->count(),
-                    'template' => Template::find($data['template_id'])->name,
+                    'countEmails' => EmailList::query()->find($data['email_list_id'])->subscribers()->count(),
+                    'template' => Template::query()->find($data['template_id'])->name,
                 ], fn () => []),
                 [
                     'tab' => $tab,

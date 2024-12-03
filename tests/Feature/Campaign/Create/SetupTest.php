@@ -133,9 +133,41 @@ test('if session is clear the variable data should have a default value', functi
 });
 // --
 describe('validations', function () {
-    test('required fields', function () {})->todo();
-    test('name should have a max of 255 characters', function () {})->todo();
-    test('subject should have a max of 40 characters', function () {})->todo();
-    test('valid email list', function () {})->todo();
-    test('valid template', function () {})->todo();
+    test('required fields', function () {
+        post($this->route)
+            ->assertSessionHasErrors([
+                'name' => __('validation.required', ['attribute' => 'name']),
+                'subject' => __('validation.required', ['attribute' => 'subject']),
+                'email_list_id' => __('validation.required', ['attribute' => 'email list id']),
+                'template_id' => __('validation.required', ['attribute' => 'template id']),
+            ]);
+    });
+
+    test('name should have a max of 255 characters', function () {
+        post($this->route, ['name' => str_repeat('*', 256)])
+            ->assertSessionHasErrors([
+                'name' => __('validation.max.string', ['attribute' => 'name', 'max' => '255']),
+            ]);
+    });
+
+    test('subject should have a max of 40 characters', function () {
+        post($this->route, ['subject' => str_repeat('*', 41)])
+            ->assertSessionHasErrors([
+                'subject' => __('validation.max.string', ['attribute' => 'subject', 'max' => '40']),
+            ]);
+    });
+
+    test('valid email list', function () {
+        post($this->route, ['email_list_id' => 12])
+            ->assertSessionHasErrors([
+                'email_list_id' => __('validation.exists', ['attribute' => 'email list id']),
+            ]);
+    });
+
+    test('valid template', function () {
+        post($this->route, ['template_id' => 12])
+            ->assertSessionHasErrors([
+                'template_id' => __('validation.exists', ['attribute' => 'template id']),
+            ]);
+    });
 });

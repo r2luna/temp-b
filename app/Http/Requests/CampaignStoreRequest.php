@@ -49,6 +49,13 @@ class CampaignStoreRequest extends FormRequest
 
         // --
         $session = session('campaign', $map);
+
+        foreach ($map as $key => $value) {
+            if (! is_null($value)) {
+                $session[$key] = $value;
+            }
+        }
+
         foreach ($session as $key => $value) {
             $newValue = data_get($session, $key);
             if ($key == 'track_click' || $key == 'track_open') {
@@ -59,9 +66,9 @@ class CampaignStoreRequest extends FormRequest
         }
 
         // --
-        if ($templateId = $session['template_id'] && blank($session['body'])) {
-            $template = Template::find($templateId);
-            $session['body'] = $template->body;
+        if (($templateId = $session['template_id']) && blank($session['body'])) {
+            $template = Template::query()->find($templateId);
+            $session['body'] = $template?->body;
         }
 
         session()->put('campaign', $session);

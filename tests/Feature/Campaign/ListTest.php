@@ -28,14 +28,14 @@ it('should be possible see the entire list of campaigns', function () {
         });
 });
 
-it('should be able to search a template by name', function () {
+it('should be able to search a campaign by name', function () {
     Campaign::factory()->count(5)->create();
-    Campaign::factory()->create(['name' => 'Charlie Smith']);
+    $campaign = Campaign::factory()->create(['name' => 'Jeremias Smith', 'deleted_at' => null]);
 
-    get(route('campaigns.index', ['search' => 'Charlie']))
-        ->assertViewHas('campaigns', function ($value) {
+    get(route('campaigns.index', ['search' => 'Jeremias']))
+        ->assertViewHas('campaigns', function ($value) use ($campaign) {
             expect($value)->count(1);
-            expect($value)->first()->id->toBe(6);
+            expect($value)->first()->id->toBe($campaign->id);
 
             return true;
         });
@@ -43,7 +43,7 @@ it('should be able to search a template by name', function () {
 
 it('should be able to search by id', function () {
     Campaign::factory()->create(['name' => 'Joe Doe']);
-    Campaign::factory()->create(['name' => 'Jane Doe']);
+    Campaign::factory()->create(['name' => 'Jane Doe', 'deleted_at' => null]);
 
     get(route('campaigns.index', ['search' => 2]))
         ->assertViewHas('campaigns', function ($value) {

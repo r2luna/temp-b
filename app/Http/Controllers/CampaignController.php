@@ -54,7 +54,7 @@ class CampaignController extends Controller
 
     public function create(?string $tab = null)
     {
-        $data = session()->get('campaigns::create', [
+        $data = session()->get('campaign', [
             'name' => null,
             'subject' => null,
             'email_list_id' => null,
@@ -96,7 +96,7 @@ class CampaignController extends Controller
         $toRoute = $request->getToRoute();
 
         if ($tab == 'schedule') {
-            $campaign = Campaign::create($data);
+            $campaign = Campaign::query()->create($data);
 
             SendEmailsCampaignJob::dispatchAfterResponse($campaign);
         }

@@ -2,13 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Mail\EmailCampaign;
 use App\Models\Campaign;
-use App\Models\CampaignMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 
 class SendEmailsCampaignJob implements ShouldQueue
 {

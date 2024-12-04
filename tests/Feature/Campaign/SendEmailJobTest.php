@@ -41,7 +41,7 @@ test('when a campaign is set to send now an email should be send right a way', f
 
     SendEmailCampaignJob::dispatch($campaign, $subscriber);
 
-    Mail::assertQueued(EmailCampaign::class, function (EmailCampaign $mail) use ($subscriber) {
+    Mail::assertQueued(EmailCampaign::class, function (EmailCampaign $mail) use ($subscriber, $campaign) {
         expect($mail->delay->eq($campaign->send_at->format('Y-m-d')))->toBeTrue();
         expect($mail->hasTo($subscriber->email, $subscriber->name))->toBeTrue();
 

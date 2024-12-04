@@ -28,7 +28,7 @@ class CampaignFactory extends Factory
             'body' => fake()->sentence(3, true).'<a href="https://www.google.com/">Clique Aqui</a>',
             'created_at' => fake()->dateTimeBetween('-7 days', 'now'),
             'updated_at' => fake()->dateTimeBetween('-7 days', 'now'),
-            'deleted_at' => fake()->boolean ? fake()->dateTimeBetween('-7 days', 'now') : null,
+            // 'deleted_at' => fake()->boolean ? fake()->dateTimeBetween('-7 days', 'now') : null,
         ];
     }
 }

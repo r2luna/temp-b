@@ -41,26 +41,26 @@ it('should be possible see the entire list of subscribers', function () {
 
 it('should be able to search a subscriber', function () {
     Subscriber::factory()->count(5)->create(['email_list_id' => $this->emailList->id]);
-    Subscriber::factory()->create([
-        'name' => 'Charlie Smith',
-        'email' => 'joe@doe.com',
+    $subscriber = Subscriber::factory()->create([
+        'name' => 'Charlie SmithTesteee',
+        'email' => 'joe--test@doe.com',
         'email_list_id' => $this->emailList->id,
     ]);
 
     // Filtrar com email
-    get(route('subscribers.index', ['emailList' => $this->emailList, 'search' => 'joe']))
-        ->assertViewHas('subscribers', function ($value) {
+    get(route('subscribers.index', ['emailList' => $this->emailList, 'search' => 'joe--test']))
+        ->assertViewHas('subscribers', function ($value) use ($subscriber) {
             expect($value)->count(1);
-            expect($value)->first()->id->toBe(6);
+            expect($value)->first()->id->toBe($subscriber->id);
 
             return true;
         });
 
     // Filtrar com nome
-    get(route('subscribers.index', ['emailList' => $this->emailList, 'search' => 'smith']))
-        ->assertViewHas('subscribers', function ($value) {
+    get(route('subscribers.index', ['emailList' => $this->emailList, 'search' => 'SmithTesteee']))
+        ->assertViewHas('subscribers', function ($value) use ($subscriber) {
             expect($value)->count(1);
-            expect($value)->first()->id->toBe(6);
+            expect($value)->first()->id->toBe($subscriber->id);
 
             return true;
         });
@@ -69,13 +69,13 @@ it('should be able to search a subscriber', function () {
 
 it('should be able to search by id', function () {
     Subscriber::factory()->create(['name' => 'Joe Doe', 'email' => 'joe@doe.com', 'email_list_id' => $this->emailList->id]);
-    Subscriber::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@doe.com', 'email_list_id' => $this->emailList->id]);
+    $subscriber = Subscriber::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@doe.com', 'email_list_id' => $this->emailList->id]);
 
     // Filtrar com id
     get(route('subscribers.index', ['emailList' => $this->emailList, 'search' => 2]))
-        ->assertViewHas('subscribers', function ($value) {
+        ->assertViewHas('subscribers', function ($value) use ($subscriber) {
             expect($value)->count(1);
-            expect($value)->first()->id->toBe(2);
+            expect($value)->first()->id->toBe($subscriber->id);
 
             return true;
         });
